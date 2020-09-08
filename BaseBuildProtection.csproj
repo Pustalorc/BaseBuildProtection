@@ -30,7 +30,20 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DecayPatch|AnyCPU'">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\DecayPatch\</OutputPath>
+    <DefineConstants>DecayPatch</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AdvancedDecay.Reference, Version=2.2.1.0, Culture=neutral, processorArchitecture=MSIL" Condition="'$(Configuration)'=='DecayPatch'">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Libraries\AdvancedDecay.Reference.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Assembly-CSharp">
       <HintPath>libs\Assembly-CSharp.dll</HintPath>
     </Reference>
@@ -72,6 +85,11 @@
       <Project>{d64124cb-7b6e-4334-ab68-857848e03858}</Project>
       <Name>BaseClustering</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Libraries\AdvancedDecay.Reference.dll" Condition="'$(Configuration)'=='DecayPatch'">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
