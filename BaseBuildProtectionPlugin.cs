@@ -62,7 +62,7 @@ namespace Pustalorc.Plugins.BaseBuildProtection
 #if DecayPatch
             var config = AdvancedDecayPlugin.Instance.Configuration.Instance.Decays.LastOrDefault(k =>
                 new RocketPlayer(commonOwner.ToString()).HasPermission(k.Permission));
-            var tcList = AdvancedDecayPlugin.Instance.defaultRustConfiguration.Instance.ToolCupboardItemIds;
+            var tcList = AdvancedDecayPlugin.Instance.DefaultRustConfiguration.Instance.ToolCupboardItemIds;
 
             if (config != null)
                 tcList.AddRange(config.RustDecaySettings.ToolCupboardIds);
