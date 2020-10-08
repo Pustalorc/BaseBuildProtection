@@ -60,35 +60,22 @@ namespace Pustalorc.Plugins.BaseBuildProtection
             var commonGroup = bestCluster.CommonGroup;
 
 #if DecayPatch
-            var config = AdvancedDecayPlugin.Instance.Configuration.Instance.Decays.LastOrDefault(k =>
-                new RocketPlayer(commonOwner.ToString()).HasPermission(k.Permission));
-            var tcList = AdvancedDecayPlugin.Instance.DefaultRustConfiguration.Instance.ToolCupboardItemIds;
-
-            if (config != null)
-                tcList.AddRange(config.RustDecaySettings.ToolCupboardIds);
-
-            var baseTcs = bestCluster.Buildables.Where(l => tcList.Contains(l.AssetId));
-
-            var changedOwner = false;
-            do
+            if (AdvancedDecayPlugin.Instance != null)
             {
-                if (!baseTcs.Any()) break;
+                var allTcs = AdvancedDecayPlugin.Instance.DefaultRustConfiguration.Instance.ToolCupboardItemIds;
+                allTcs.AddRange(
+                    AdvancedDecayPlugin.Instance.Configuration.Instance.Decays.SelectMany(k =>
+                        k.RustDecaySettings.ToolCupboardIds));
+                var baseTcs = bestCluster.Buildables.Where(l => allTcs.Contains(l.AssetId));
 
-                var newOwner = baseTcs.Where(l => l.Owner != CSteamID.Nil.m_SteamID).GroupBy(l => l.Owner)
-                    .OrderByDescending(l => l.Count()).Select(g => g.Key).FirstOrDefault();
-                changedOwner = newOwner != commonOwner;
-                commonOwner = newOwner;
-
-                commonGroup = baseTcs.Where(l => l.Group != CSteamID.Nil.m_SteamID).GroupBy(l => l.Group)
-                    .OrderByDescending(l => l.Count()).Select(g => g.Key).FirstOrDefault();
-                config = AdvancedDecayPlugin.Instance.Configuration.Instance.Decays.LastOrDefault(k =>
-                    new RocketPlayer(commonOwner.ToString()).HasPermission(k.Permission));
-
-                if (config != null)
-                    tcList.AddRange(config.RustDecaySettings.ToolCupboardIds);
-
-                baseTcs = bestCluster.Buildables.Where(l => tcList.Contains(l.AssetId));
-            } while (changedOwner);
+                if (baseTcs.Any())
+                {
+                    commonOwner = baseTcs.Where(l => l.Owner != CSteamID.Nil.m_SteamID).GroupBy(l => l.Owner)
+                        .OrderByDescending(l => l.Count()).Select(g => g.Key).FirstOrDefault();
+                    commonGroup = baseTcs.Where(l => l.Group != CSteamID.Nil.m_SteamID).GroupBy(l => l.Group)
+                        .OrderByDescending(l => l.Count()).Select(g => g.Key).FirstOrDefault();
+                }
+            }
 #endif
 
             return commonOwner == owner || (group != CSteamID.Nil.m_SteamID && group == commonGroup);
