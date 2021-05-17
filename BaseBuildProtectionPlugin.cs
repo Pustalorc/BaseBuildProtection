@@ -1,5 +1,4 @@
 ﻿using Pustalorc.Plugins.BaseClustering;
-using Pustalorc.Plugins.BaseClustering.API.Statics;
 using Rocket.Core.Plugins;
 using SDG.Unturned;
 using Steamworks;
@@ -12,7 +11,7 @@ using System.Linq;
 
 namespace Pustalorc.Plugins.BaseBuildProtection
 {
-    public class BaseBuildProtectionPlugin : RocketPlugin<BaseBuildProtectionConfiguration>
+    public class BaseBuildProtectionPlugin : RocketPlugin
     {
         protected override void Load()
         {
@@ -46,13 +45,16 @@ namespace Pustalorc.Plugins.BaseBuildProtection
 
         private bool CheckValidDeployPosAndOwner(Vector3 point, ulong owner, ulong group)
         {
-            if (BaseClusteringPlugin.Instance == null)
+            var bClusterDirectory = BaseClusteringPlugin.Instance?.BaseClusterDirectory;
+
+
+            if (bClusterDirectory == null)
             {
                 Logging.Write(this, "Base Clustering is not loaded. Will not perform any more code.");
                 return true;
             }
 
-            var bestCluster = BaseClusteringPlugin.Instance.Clusters.FindBestCluster(point, Configuration.Instance.ExtraProtectionRadius);
+            var bestCluster = bClusterDirectory.FindBestCluster(point);
 
             if (bestCluster == null) return true;
 
@@ -60,12 +62,12 @@ namespace Pustalorc.Plugins.BaseBuildProtection
             var commonGroup = bestCluster.CommonGroup;
 
 #if DecayPatch
-            if (AdvancedDecayPlugin.Instance != null)
+            var decayPlugin = AdvancedDecayPlugin.Instance;
+            if (decayPlugin != null)
             {
-                var allTcs = AdvancedDecayPlugin.Instance.DefaultRustConfiguration.Instance.ToolCupboardItemIds;
-                allTcs.AddRange(
-                    AdvancedDecayPlugin.Instance.Configuration.Instance.Decays.SelectMany(k =>
-                        k.RustDecaySettings.ToolCupboardIds));
+                var baseDecayConfig = decayPlugin.BaseDecayConfiguration.Instance;
+                var allTcs = baseDecayConfig.ToolCupboardItemIds;
+                allTcs.AddRange(baseDecayConfig.CustomBaseSettings.SelectMany(k => k.ToolCupboardItemIds));
                 var baseTcs = bestCluster.Buildables.Where(l => allTcs.Contains(l.AssetId));
 
                 if (baseTcs.Any())

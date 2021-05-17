@@ -47,9 +47,6 @@
     <Reference Include="Assembly-CSharp">
       <HintPath>libs\Assembly-CSharp.dll</HintPath>
     </Reference>
-    <Reference Include="Assembly-CSharp-firstpass">
-      <HintPath>libs\Assembly-CSharp-firstpass.dll</HintPath>
-    </Reference>
     <Reference Include="Rocket.API">
       <HintPath>libs\Rocket.API.dll</HintPath>
     </Reference>
@@ -58,6 +55,12 @@
     </Reference>
     <Reference Include="Rocket.Unturned">
       <HintPath>libs\Rocket.Unturned.dll</HintPath>
+    </Reference>
+    <Reference Include="SDG.NetTransport">
+      <HintPath>libs\SDG.NetTransport.dll</HintPath>
+    </Reference>
+    <Reference Include="Steamworks.NET">
+      <HintPath>libs\Steamworks.NET.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -73,9 +76,11 @@
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>libs\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.PhysicsModule">
+      <HintPath>libs\UnityEngine.PhysicsModule.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BaseBuildProtectionConfiguration.cs" />
     <Compile Include="BaseBuildProtectionPlugin.cs" />
     <Compile Include="Logging.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
