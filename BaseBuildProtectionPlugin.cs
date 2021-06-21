@@ -4,14 +4,14 @@ using SDG.Unturned;
 using Steamworks;
 using UnityEngine;
 #if DecayPatch
+using System.Collections.Generic;
 using Pustalorc.ImperialPlugins.Decay;
-using Rocket.API;
 using System.Linq;
 #endif
 
 namespace Pustalorc.Plugins.BaseBuildProtection
 {
-    public class BaseBuildProtectionPlugin : RocketPlugin
+    public sealed class BaseBuildProtectionPlugin : RocketPlugin
     {
         protected override void Load()
         {
@@ -33,6 +33,9 @@ namespace Pustalorc.Plugins.BaseBuildProtection
             ref float angleX, ref float angleY, ref float angleZ, ref ulong owner, ref ulong group,
             ref bool shouldAllow)
         {
+            if (!shouldAllow)
+                return;
+
             shouldAllow = CheckValidDeployPosAndOwner(point, owner, group);
         }
 
@@ -40,17 +43,29 @@ namespace Pustalorc.Plugins.BaseBuildProtection
             ref float angleX, ref float angleY, ref float angleZ, ref ulong owner, ref ulong group,
             ref bool shouldAllow)
         {
+            if (!shouldAllow)
+                return;
+
             shouldAllow = CheckValidDeployPosAndOwner(point, owner, group);
         }
 
         private bool CheckValidDeployPosAndOwner(Vector3 point, ulong owner, ulong group)
         {
-            var bClusterDirectory = BaseClusteringPlugin.Instance?.BaseClusterDirectory;
+            var clusteringPlugin = BaseClusteringPlugin.Instance;
 
+            if (clusteringPlugin == null)
+            {
+                Logging.Write(this, "Base Clustering is not loaded. Will not perform any more code.");
+                UnloadPlugin();
+                return true;
+            }
+
+            var bClusterDirectory = clusteringPlugin.BaseClusterDirectory;
 
             if (bClusterDirectory == null)
             {
-                Logging.Write(this, "Base Clustering is not loaded. Will not perform any more code.");
+                Logging.Write(this, "Clustering feature on BaseClustering plugin is not loaded. Will not perform any more code.");
+                UnloadPlugin();
                 return true;
             }
 
@@ -63,14 +78,20 @@ namespace Pustalorc.Plugins.BaseBuildProtection
 
 #if DecayPatch
             var decayPlugin = AdvancedDecayPlugin.Instance;
+
+            // ReSharper disable once InvertIf
+            // A dumb invert. We always return same thing.
             if (decayPlugin != null)
             {
                 var baseDecayConfig = decayPlugin.BaseDecayConfiguration.Instance;
-                var allTcs = baseDecayConfig.ToolCupboardItemIds;
-                allTcs.AddRange(baseDecayConfig.CustomBaseSettings.SelectMany(k => k.ToolCupboardItemIds));
-                var baseTcs = bestCluster.Buildables.Where(l => allTcs.Contains(l.AssetId));
 
-                if (baseTcs.Any())
+                var allTcs = new HashSet<ushort>(baseDecayConfig.CustomBaseSettings.SelectMany(k => k.ToolCupboardItemIds).Concat(baseDecayConfig.ToolCupboardItemIds));
+
+                var baseTcs = bestCluster.Buildables.Where(l => allTcs.Contains(l.AssetId)).ToList();
+
+                // ReSharper disable once InvertIf
+                // A dumb invert. We always return same thing.
+                if (baseTcs.Count > 0)
                 {
                     commonOwner = baseTcs.Where(l => l.Owner != CSteamID.Nil.m_SteamID).GroupBy(l => l.Owner)
                         .OrderByDescending(l => l.Count()).Select(g => g.Key).FirstOrDefault();
@@ -80,7 +101,7 @@ namespace Pustalorc.Plugins.BaseBuildProtection
             }
 #endif
 
-            return commonOwner == owner || (group != CSteamID.Nil.m_SteamID && group == commonGroup);
+            return commonOwner == owner || group != CSteamID.Nil.m_SteamID && group == commonGroup;
         }
     }
 }
