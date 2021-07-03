@@ -79,29 +79,24 @@ namespace Pustalorc.Plugins.BaseBuildProtection
 #if DecayPatch
             var decayPlugin = AdvancedDecayPlugin.Instance;
 
-            // ReSharper disable once InvertIf
-            // A dumb invert. We always return same thing.
-            if (decayPlugin != null)
-            {
-                var baseDecayConfig = decayPlugin.BaseDecayConfiguration.Instance;
+            if (decayPlugin == null) return true;
+            
+            var baseDecayConfig = decayPlugin.BaseDecayConfiguration.Instance;
 
-                var allTcs = new HashSet<ushort>(baseDecayConfig.CustomBaseSettings.SelectMany(k => k.ToolCupboardItemIds).Concat(baseDecayConfig.ToolCupboardItemIds));
+            var allTcs = new HashSet<ushort>(baseDecayConfig.CustomBaseSettings.SelectMany(k => k.ToolCupboardItemIds).Concat(baseDecayConfig.ToolCupboardItemIds));
 
-                var baseTcs = bestCluster.Buildables.Where(l => allTcs.Contains(l.AssetId)).ToList();
+            var baseTcs = bestCluster.Buildables.Where(l => allTcs.Contains(l.AssetId)).ToList();
 
-                // ReSharper disable once InvertIf
-                // A dumb invert. We always return same thing.
-                if (baseTcs.Count > 0)
-                {
-                    commonOwner = baseTcs.Where(l => l.Owner != CSteamID.Nil.m_SteamID).GroupBy(l => l.Owner)
-                        .OrderByDescending(l => l.Count()).Select(g => g.Key).FirstOrDefault();
-                    commonGroup = baseTcs.Where(l => l.Group != CSteamID.Nil.m_SteamID).GroupBy(l => l.Group)
-                        .OrderByDescending(l => l.Count()).Select(g => g.Key).FirstOrDefault();
-                }
-            }
+            if (baseTcs.Count <= 0) return true;
+
+            commonOwner = baseTcs.Where(l => l.Owner != CSteamID.Nil.m_SteamID).GroupBy(l => l.Owner)
+                .OrderByDescending(l => l.Count()).Select(g => g.Key).FirstOrDefault();
+            commonGroup = baseTcs.Where(l => l.Group != CSteamID.Nil.m_SteamID).GroupBy(l => l.Group)
+                .OrderByDescending(l => l.Count()).Select(g => g.Key).FirstOrDefault();
 #endif
 
             return commonOwner == owner || group != CSteamID.Nil.m_SteamID && group == commonGroup;
+
         }
     }
 }
