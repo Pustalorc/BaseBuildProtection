@@ -69,34 +69,54 @@ namespace Pustalorc.Plugins.BaseBuildProtection
                 return true;
             }
 
+#if DecayPatch
+            var bestClusters = bClusterDirectory.FindBestClusters(point).ToList();
+
+            if (bestClusters.Count <= 0)
+#else
             var bestCluster = bClusterDirectory.FindBestCluster(point);
 
-            if (bestCluster == null) return true;
-
-            var commonOwner = bestCluster.CommonOwner;
-            var commonGroup = bestCluster.CommonGroup;
+            if (bestCluster == null)
+#endif
+                return true;
 
 #if DecayPatch
-            var decayPlugin = AdvancedDecayPlugin.Instance;
-
-            if (decayPlugin == null) return true;
-            
-            var baseDecayConfig = decayPlugin.BaseDecayConfiguration.Instance;
-
-            var allTcs = new HashSet<ushort>(baseDecayConfig.CustomBaseSettings.SelectMany(k => k.ToolCupboardItemIds).Concat(baseDecayConfig.ToolCupboardItemIds));
-
-            var baseTcs = bestCluster.Buildables.Where(l => allTcs.Contains(l.AssetId)).ToList();
-
-            if (baseTcs.Count <= 0) return true;
-
-            commonOwner = baseTcs.Where(l => l.Owner != CSteamID.Nil.m_SteamID).GroupBy(l => l.Owner)
-                .OrderByDescending(l => l.Count()).Select(g => g.Key).FirstOrDefault();
-            commonGroup = baseTcs.Where(l => l.Group != CSteamID.Nil.m_SteamID).GroupBy(l => l.Group)
-                .OrderByDescending(l => l.Count()).Select(g => g.Key).FirstOrDefault();
+            foreach (var bestCluster in bestClusters)
+            {
 #endif
 
-            return commonOwner == owner || group != CSteamID.Nil.m_SteamID && group == commonGroup;
+                var commonOwner = bestCluster.CommonOwner;
+                var commonGroup = bestCluster.CommonGroup;
 
+#if DecayPatch
+                var decayPlugin = AdvancedDecayPlugin.Instance;
+
+                if (decayPlugin == null)
+                    continue;
+
+                var baseDecayConfig = decayPlugin.BaseDecayConfiguration.Instance;
+
+                var allTcs = new HashSet<ushort>(baseDecayConfig.CustomBaseSettings
+                    .SelectMany(k => k.ToolCupboardItemIds).Concat(baseDecayConfig.ToolCupboardItemIds));
+
+                var baseTcs = bestCluster.Buildables.Where(l => allTcs.Contains(l.AssetId)).ToList();
+
+                if (baseTcs.Count <= 0)
+                    continue;
+
+                commonOwner = baseTcs.Where(l => l.Owner != CSteamID.Nil.m_SteamID).GroupBy(l => l.Owner)
+                    .OrderByDescending(l => l.Count()).Select(g => g.Key).FirstOrDefault();
+                commonGroup = baseTcs.Where(l => l.Group != CSteamID.Nil.m_SteamID).GroupBy(l => l.Group)
+                    .OrderByDescending(l => l.Count()).Select(g => g.Key).FirstOrDefault();
+#endif
+                if (!(commonOwner == owner || group != CSteamID.Nil.m_SteamID && group == commonGroup))
+                    return false;
+
+#if DecayPatch
+            }
+#endif
+
+            return true;
         }
     }
 }
