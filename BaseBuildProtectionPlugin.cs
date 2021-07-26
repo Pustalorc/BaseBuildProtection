@@ -1,10 +1,10 @@
-﻿using Pustalorc.Plugins.BaseClustering;
+﻿using Pustalorc.ImperialPlugins.Decay.API.Utilities;
+using Pustalorc.Plugins.BaseClustering;
 using Rocket.Core.Plugins;
 using SDG.Unturned;
 using Steamworks;
 using UnityEngine;
 #if DecayPatch
-using System.Collections.Generic;
 using Pustalorc.ImperialPlugins.Decay;
 using System.Linq;
 #endif
@@ -94,12 +94,14 @@ namespace Pustalorc.Plugins.BaseBuildProtection
                 if (decayPlugin == null)
                     continue;
 
+                var configurationUtility = decayPlugin.ConfigurationUtility;
+
+                if (configurationUtility == null)
+                    continue;
+
                 var baseDecayConfig = decayPlugin.BaseDecayConfiguration.Instance;
 
-                var allTcs = new HashSet<ushort>(baseDecayConfig.CustomBaseSettings
-                    .SelectMany(k => k.ToolCupboardItemIds).Concat(baseDecayConfig.ToolCupboardItemIds));
-
-                var baseTcs = bestCluster.Buildables.Where(l => allTcs.Contains(l.AssetId)).ToList();
+                var baseTcs = bestCluster.Buildables.GetToolCupboards(configurationUtility, baseDecayConfig);
 
                 if (baseTcs.Count <= 0)
                     continue;
