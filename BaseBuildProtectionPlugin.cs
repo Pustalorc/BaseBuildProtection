@@ -1,10 +1,10 @@
-﻿using Pustalorc.ImperialPlugins.Decay.API.Utilities;
-using Pustalorc.Plugins.BaseClustering;
+﻿using Pustalorc.Plugins.BaseClustering;
 using Rocket.Core.Plugins;
 using SDG.Unturned;
 using Steamworks;
 using UnityEngine;
 #if DecayPatch
+using Pustalorc.ImperialPlugins.Decay.API.Utilities;
 using Pustalorc.ImperialPlugins.Decay;
 using System.Linq;
 #endif
