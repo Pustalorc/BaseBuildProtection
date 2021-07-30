@@ -55,7 +55,12 @@ namespace Pustalorc.Plugins.BaseBuildProtection
             ref bool shouldAllow)
         {
             var config = Configuration.Instance;
-            if (!shouldAllow || config.BypassedIds.Contains(asset.id) || UnturnedPlayer.FromCSteamID((CSteamID) owner).HasPermission(config.BypassPermission))
+            if (!shouldAllow || config.BypassedIds.Contains(asset.id))
+                return;
+
+            var player = UnturnedPlayer.FromCSteamID((CSteamID) owner);
+
+            if (player?.HasPermission(config.BypassPermission) == true)
                 return;
 
             shouldAllow = CheckValidDeployPosAndOwner(point, owner, group);
@@ -66,7 +71,12 @@ namespace Pustalorc.Plugins.BaseBuildProtection
             ref bool shouldAllow)
         {
             var config = Configuration.Instance;
-            if (!shouldAllow || config.BypassedIds.Contains(asset.id) || UnturnedPlayer.FromCSteamID((CSteamID) owner).HasPermission(config.BypassPermission))
+            if (!shouldAllow || config.BypassedIds.Contains(asset.id))
+                return;
+
+            var player = UnturnedPlayer.FromCSteamID((CSteamID) owner);
+
+            if (player?.HasPermission(config.BypassPermission) == true)
                 return;
 
             shouldAllow = CheckValidDeployPosAndOwner(point, owner, group);
