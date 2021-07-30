@@ -1,5 +1,8 @@
-﻿using Pustalorc.Plugins.BaseClustering;
+﻿using System.Collections.Generic;
+using Pustalorc.Plugins.BaseClustering;
+using Rocket.API;
 using Rocket.Core.Plugins;
+using Rocket.Unturned.Player;
 using SDG.Unturned;
 using Steamworks;
 using UnityEngine;
@@ -11,7 +14,25 @@ using System.Linq;
 
 namespace Pustalorc.Plugins.BaseBuildProtection
 {
-    public sealed class BaseBuildProtectionPlugin : RocketPlugin
+    public sealed class BaseBuildProtectionConfiguration : IRocketPluginConfiguration
+    {
+        public string BypassPermission { get; set; }
+        public HashSet<ushort> BypassedIds { get; set; }
+
+        public BaseBuildProtectionConfiguration()
+        {
+            BypassPermission = "";
+            BypassedIds = new HashSet<ushort>();
+        }
+
+        public void LoadDefaults()
+        {
+            BypassPermission = "BaseBuildProtection.Bypass";
+            BypassedIds = new HashSet<ushort> {0};
+        }
+    }
+
+    public sealed class BaseBuildProtectionPlugin : RocketPlugin<BaseBuildProtectionConfiguration>
     {
         protected override void Load()
         {
@@ -33,7 +54,8 @@ namespace Pustalorc.Plugins.BaseBuildProtection
             ref float angleX, ref float angleY, ref float angleZ, ref ulong owner, ref ulong group,
             ref bool shouldAllow)
         {
-            if (!shouldAllow)
+            var config = Configuration.Instance;
+            if (!shouldAllow || config.BypassedIds.Contains(asset.id) || UnturnedPlayer.FromCSteamID((CSteamID) owner).HasPermission(config.BypassPermission))
                 return;
 
             shouldAllow = CheckValidDeployPosAndOwner(point, owner, group);
@@ -43,7 +65,8 @@ namespace Pustalorc.Plugins.BaseBuildProtection
             ref float angleX, ref float angleY, ref float angleZ, ref ulong owner, ref ulong group,
             ref bool shouldAllow)
         {
-            if (!shouldAllow)
+            var config = Configuration.Instance;
+            if (!shouldAllow || config.BypassedIds.Contains(asset.id) || UnturnedPlayer.FromCSteamID((CSteamID) owner).HasPermission(config.BypassPermission))
                 return;
 
             shouldAllow = CheckValidDeployPosAndOwner(point, owner, group);
