@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Pustalorc.Plugins.BaseClustering;
+﻿using Pustalorc.Plugins.BaseClustering;
 using Rocket.API;
 using Rocket.Core.Plugins;
 using Rocket.Unturned.Player;
@@ -14,24 +13,6 @@ using System.Linq;
 
 namespace Pustalorc.Plugins.BaseBuildProtection
 {
-    public sealed class BaseBuildProtectionConfiguration : IRocketPluginConfiguration
-    {
-        public string BypassPermission { get; set; }
-        public HashSet<ushort> BypassedIds { get; set; }
-
-        public BaseBuildProtectionConfiguration()
-        {
-            BypassPermission = "";
-            BypassedIds = new HashSet<ushort>();
-        }
-
-        public void LoadDefaults()
-        {
-            BypassPermission = "BaseBuildProtection.Bypass";
-            BypassedIds = new HashSet<ushort> {0};
-        }
-    }
-
     public sealed class BaseBuildProtectionPlugin : RocketPlugin<BaseBuildProtectionConfiguration>
     {
         protected override void Load()
@@ -58,7 +39,7 @@ namespace Pustalorc.Plugins.BaseBuildProtection
             if (!shouldAllow || config.BypassedIds.Contains(asset.id))
                 return;
 
-            var player = UnturnedPlayer.FromCSteamID((CSteamID) owner);
+            var player = UnturnedPlayer.FromCSteamID((CSteamID)owner);
 
             if (player?.HasPermission(config.BypassPermission) == true)
                 return;
@@ -74,7 +55,7 @@ namespace Pustalorc.Plugins.BaseBuildProtection
             if (!shouldAllow || config.BypassedIds.Contains(asset.id))
                 return;
 
-            var player = UnturnedPlayer.FromCSteamID((CSteamID) owner);
+            var player = UnturnedPlayer.FromCSteamID((CSteamID)owner);
 
             if (player?.HasPermission(config.BypassPermission) == true)
                 return;
@@ -97,7 +78,8 @@ namespace Pustalorc.Plugins.BaseBuildProtection
 
             if (bClusterDirectory == null)
             {
-                Logging.Write(this, "Clustering feature on BaseClustering plugin is not loaded. Will not perform any more code.");
+                Logging.Write(this,
+                    "Clustering feature on BaseClustering plugin is not loaded. Will not perform any more code.");
                 UnloadPlugin();
                 return true;
             }
