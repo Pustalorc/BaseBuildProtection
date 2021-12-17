@@ -5,7 +5,7 @@ using Rocket.Unturned.Player;
 using SDG.Unturned;
 using Steamworks;
 using UnityEngine;
-#if DecayPatch
+#if DECAYPATCH
 using Pustalorc.ImperialPlugins.Decay.API.Utilities;
 using Pustalorc.ImperialPlugins.Decay;
 using System.Linq;
@@ -84,7 +84,7 @@ namespace Pustalorc.Plugins.BaseBuildProtection
                 return true;
             }
 
-#if DecayPatch
+#if DECAYPATCH
             var bestClusters = bClusterDirectory.FindBestClusters(point).ToList();
 
             if (bestClusters.Count <= 0)
@@ -95,7 +95,7 @@ namespace Pustalorc.Plugins.BaseBuildProtection
 #endif
                 return true;
 
-#if DecayPatch
+#if DECAYPATCH
             foreach (var bestCluster in bestClusters)
             {
 #endif
@@ -103,7 +103,7 @@ namespace Pustalorc.Plugins.BaseBuildProtection
                 var commonOwner = bestCluster.CommonOwner;
                 var commonGroup = bestCluster.CommonGroup;
 
-#if DecayPatch
+#if DECAYPATCH
                 var decayPlugin = AdvancedDecayPlugin.Instance;
 
                 if (decayPlugin == null)
@@ -129,7 +129,7 @@ namespace Pustalorc.Plugins.BaseBuildProtection
                 if (!(commonOwner == owner || group != CSteamID.Nil.m_SteamID && group == commonGroup))
                     return false;
 
-#if DecayPatch
+#if DECAYPATCH
             }
 #endif
 

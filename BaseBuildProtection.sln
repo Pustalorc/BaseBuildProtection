@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30413.136
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BaseBuildProtection", "BaseBuildProtection.csproj", "{AAD899C8-26D0-4C96-9997-C1D7248ED4B6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BaseBuildProtection", "BaseBuildProtection\BaseBuildProtection.csproj", "{AAD899C8-26D0-4C96-9997-C1D7248ED4B6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BaseClustering", "BaseClustering\BaseClustering.csproj", "{D64124CB-7B6E-4334-AB68-857848E03858}"
 EndProject

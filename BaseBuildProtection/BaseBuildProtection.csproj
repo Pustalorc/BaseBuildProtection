@@ -1,0 +1,61 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <RootNamespace>Pustalorc.Plugins.BaseBuildProtection</RootNamespace>
+        <AssemblyName>BaseBuildProtection</AssemblyName>
+        <TargetFramework>net48</TargetFramework>
+        <LangVersion>10</LangVersion>
+        <Nullable>enable</Nullable>
+        <AssemblyTitle>BaseBuildProtection</AssemblyTitle>
+        <Company>Pustalorc</Company>
+        <Product>BaseBuildProtection</Product>
+        <Copyright>Copyright © Pustalorc 2020-2022</Copyright>
+        <AssemblyVersion>1.1.1</AssemblyVersion>
+        <FileVersion>1.1.1</FileVersion>
+        <OutputPath>bin\$(Configuration)\</OutputPath>
+        <IsPackable>false</IsPackable>
+        <Configurations>Debug;Release;DecayPatch</Configurations>
+        <Platforms>AnyCPU</Platforms>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+        <DebugType>full</DebugType>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+        <DebugType>portable</DebugType>
+    </PropertyGroup>
+    <ItemGroup>
+        <Reference Include="AdvancedDecay, Version=2.5.9.0, Culture=neutral, PublicKeyToken=null">
+            <HintPath>Libraries\AdvancedDecay.Reference.dll</HintPath>
+        </Reference>
+        <Reference Include="Assembly-CSharp">
+            <HintPath>libs\Assembly-CSharp.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="com.rlabrecque.steamworks.net">
+            <HintPath>libs\com.rlabrecque.steamworks.net.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="Rocket.API">
+            <HintPath>libs\Rocket.API.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="Rocket.Core">
+            <HintPath>libs\Rocket.Core.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="Rocket.Unturned">
+            <HintPath>libs\Rocket.Unturned.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="UnityEngine">
+            <HintPath>libs\UnityEngine.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="UnityEngine.CoreModule">
+            <HintPath>libs\UnityEngine.CoreModule.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\BaseClustering\BaseClustering.csproj"/>
+    </ItemGroup>
+</Project>
